@@ -41,6 +41,7 @@ All enums are defined in `lc_pkg.sv`. `lc_alu_op_T` is shared with the ALU and u
 
 ## Decode Table
 | Instruction |  o_alu_op | o_op_a_sel | o_op_b_sel| o_rd_we | o_mem_re | o_mem_we | o_mem_size | o_mem_unsigned | o_branch | o_wb_sel |
+|---|---|---|---|---|---|---|---|---|---|---|
 |     LUI     |  ALU_ADD  |  OPA_ZERO  |  OPB_IMM  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  | 
 |    AUIPC    |  ALU_ADD  |  OPA_PC    |  OPB_IMM  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |        
 |     JAL     |  ALU_ADD  |  OPA_PC    |  OPB_IMM  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_PC4  |        
