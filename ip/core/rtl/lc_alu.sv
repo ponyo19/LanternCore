@@ -13,10 +13,23 @@ module lc_alu #(
     output logic                                o_lt,    // op_a <  op_b, signed
     output logic                                o_ltu    // op_a <  op_b, unsigned
 );
+    assign o_eq = (i_op_a == i_op_b);
+    assign o_lt = signed'(i_op_a) < signed'(i_op_b);
+    assign o_ltu = i_op_a < i_op_b;
 
-    assign o_alu_result    = '0;
-    assign o_eq            = '0;
-    assign o_lt            = '0;
-    assign o_ltu           = '0;
-
+    always_comb begin
+        case(i_alu_op)
+            ALU_ADD: o_alu_result = i_op_a + i_op_b;
+            ALU_SUB: o_alu_result = i_op_a - i_op_b;
+            ALU_SLL: o_alu_result = i_op_a << i_op_b[4:0];
+            ALU_SLT: o_alu_result = {{(g_LC_CONFIG.DATA_WIDTH-1){1'b0}}, o_lt};
+            ALU_SLTU: o_alu_result = {{(g_LC_CONFIG.DATA_WIDTH-1){1'b0}}, o_ltu};
+            ALU_XOR: o_alu_result = i_op_a ^ i_op_b;
+            ALU_SRL: o_alu_result = i_op_a >> i_op_b[4:0];
+            ALU_SRA: o_alu_result = signed'(i_op_a) >>> i_op_b[4:0];
+            ALU_OR: o_alu_result = i_op_a | i_op_b;
+            ALU_AND: o_alu_result = i_op_a & i_op_b;
+            default: o_alu_result = '0;
+        endcase
+    end
 endmodule
