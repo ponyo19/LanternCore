@@ -40,7 +40,54 @@ module lc_decoder
 All enums are defined in `lc_pkg.sv`. `lc_alu_op_T` is shared with the ALU and uses the `{funct7[5], funct3}` encoding.
 
 ## Decode Table
-To-do
+| Instruction |  o_alu_op | o_op_a_sel | o_op_b_sel| o_rd_we | o_mem_re | o_mem_we | o_mem_size | o_mem_unsigned | o_branch | o_wb_sel |
+|     LUI     |  ALU_ADD  |  OPA_ZERO  |  OPB_IMM  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  | 
+|    AUIPC    |  ALU_ADD  |  OPA_PC    |  OPB_IMM  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |        
+|     JAL     |  ALU_ADD  |  OPA_PC    |  OPB_IMM  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_PC4  |        
+|     JALR    |  ALU_ADD  |  OPA_RS1   |  OPB_IMM  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_PC4  | 
+|     BEQ     |  ALU_SUB  |  OPA_RS1   |  OPB_RS2  |    0    |    0     |    0     |     x      |        0       |     1    |    x     |        
+|     BNE     |  ALU_SUB  |  OPA_RS1   |  OPB_RS2  |    0    |    0     |    0     |     x      |        0       |     1    |    x     |       
+|     BLT     |  ALU_SUB  |  OPA_RS1   |  OPB_RS2  |    0    |    0     |    0     |     x      |        0       |     1    |    x     |          
+|     BGE     |  ALU_SUB  |  OPA_RS1   |  OPB_RS2  |    0    |    0     |    0     |     x      |        0       |     1    |    x     |     
+|     BLTU    |  ALU_SUB  |  OPA_RS1   |  OPB_RS2  |    0    |    0     |    0     |     x      |        0       |     1    |    x     |         
+|     BGEU    |  ALU_SUB  |  OPA_RS1   |  OPB_RS2  |    0    |    0     |    0     |     x      |        0       |     1    |    x     |      
+|     LB      |  ALU_ADD  |  OPA_RS1   |  OPB_IMM  |    1    |    1     |    0     |    MEM_B   |        0       |     0    |  WB_MEM  | 
+|     LH      |  ALU_ADD  |  OPA_RS1   |  OPB_IMM  |    1    |    1     |    0     |    MEM_H   |        0       |     0    |  WB_MEM  |    
+|     LW      |  ALU_ADD  |  OPA_RS1   |  OPB_IMM  |    1    |    1     |    0     |    MEM_W   |        0       |     0    |  WB_MEM  |        
+|     LBU     |  ALU_ADD  |  OPA_RS1   |  OPB_IMM  |    1    |    1     |    0     |    MEM_B   |        1       |     0    |  WB_MEM  |        
+|     LHU     |  ALU_ADD  |  OPA_RS1   |  OPB_IMM  |    1    |    1     |    0     |    MEM_H   |        1       |     0    |  WB_MEM  |        
+|     SB      |  ALU_ADD  |  OPA_RS1   |  OPB_IMM  |    0    |    0     |    1     |    MEM_B   |        0       |     0    |    x     |         
+|     SH      |  ALU_ADD  |  OPA_RS1   |  OPB_IMM  |    0    |    0     |    1     |    MEM_H   |        0       |     0    |    x     |      
+|     SW      |  ALU_ADD  |  OPA_RS1   |  OPB_IMM  |    0    |    0     |    1     |    MEM_W   |        0       |     0    |    x     |        
+|     ADDI    |  ALU_ADD  |  OPA_RS1   |  OPB_IMM  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |   
+|     SLTI    |  ALU_SLT  |  OPA_RS1   |  OPB_IMM  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |    
+|     SLTIU   |  ALU_SLTU |  OPA_RS1   |  OPB_IMM  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |     
+|     XORI    |  ALU_XOR  |  OPA_RS1   |  OPB_IMM  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |   
+|     ORI     |  ALU_OR   |  OPA_RS1   |  OPB_IMM  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |   
+|     ANDI    |  ALU_AND  |  OPA_RS1   |  OPB_IMM  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |   
+|     SLLI    |  ALU_SLL  |  OPA_RS1   |  OPB_IMM  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |   
+|     SRLI    |  ALU_SRL  |  OPA_RS1   |  OPB_IMM  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |  
+|     SRAI    |  ALU_SRA  |  OPA_RS1   |  OPB_IMM  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |   
+|     ADD     |  ALU_ADD  |  OPA_RS1   |  OPB_RS2  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |   
+|     SUB     |  ALU_SUB  |  OPA_RS1   |  OPB_RS2  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |   
+|     SLL     |  ALU_SLL  |  OPA_RS1   |  OPB_RS2  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |   
+|     SLT     |  ALU_SLT  |  OPA_RS1   |  OPB_RS2  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |   
+|     SLTU    |  ALU_SLTU |  OPA_RS1   |  OPB_RS2  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |  
+|     XOR     |  ALU_XOR  |  OPA_RS1   |  OPB_RS2  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |   
+|     SRL     |  ALU_SRL  |  OPA_RS1   |  OPB_RS2  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |   
+|     SRA     |  ALU_SRA  |  OPA_RS1   |  OPB_RS2  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |   
+|     OR      |  ALU_OR   |  OPA_RS1   |  OPB_RS2  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |   
+|     AND     |  ALU_AND  |  OPA_RS1   |  OPB_RS2  |    1    |    0     |    0     |     x      |        0       |     0    |  WB_ALU  |   
+|     FENCE   |     x     |     x      |     x     |    0    |    0     |    0     |     x      |        0       |     0    |    x     |    
+|   FENCE.TSO |     x     |     x      |     x     |    0    |    0     |    0     |     x      |        0       |     0    |    x     |   
+|     PAUSE   |     x     |     x      |     x     |    0    |    0     |    0     |     x      |        0       |     0    |    x     |    
+|     ECALL   |     x     |     x      |     x     |    0    |    0     |    0     |     x      |        0       |     0    |    x     |    
+|     EBREAK  |     x     |     x      |     x     |    0    |    0     |    0     |     x      |        0       |     0    |    x     |   
+
+**Note**
+- x means the field can be ignored
+- FENCE, PAUSE, ECALL, EBREAK is NOP
+ 
 
 ## Requirements
 
@@ -54,7 +101,7 @@ To-do
 
 ## Done when
 
-- [ ] `rtl/lc_decoder.sv` is pushed
-- [ ] Verilator lint passes with `-Wall`
+- [X] `rtl/lc_decoder.sv` is pushed
+- [X] Verilator lint passes with `-Wall`
 - [ ] Self-checking testbench in `tests/test_decoder/` checks every RV32I instruction, immediate edge cases (sign bit 0 and 1), and a set of illegal encodings
-- [ ] Decode table
+- [X] Decode table
