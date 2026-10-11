@@ -52,7 +52,7 @@ always_comb begin
     o_wb_sel = WB_ALU; 
     o_rd_we = 1'b0; 
 
-    o_mem_size = funct3[1:0];
+    o_mem_size = lc_mem_size_T'(funct3[1:0]);
     o_mem_unsigned = funct3[2];
     o_mem_re = 1'b0; 
     o_mem_we = 1'b0; 
@@ -139,7 +139,7 @@ always_comb begin
         7'b0010011: begin    //RS1 & IMM
             case (funct3) 
                 3'b000, 3'b010, 3'b011, 3'b100, 3'b110, 3'b111: begin
-                    o_alu_op = {1'b0, funct3};
+                    o_alu_op = lc_alu_op_T'({1'b0, funct3});
                     o_wb_sel = WB_ALU;
                     o_op_a_sel = OPA_RS1;
                     o_rd_we = 1'b1;
@@ -147,7 +147,7 @@ always_comb begin
                 
                 3'b001: begin     //SLLI
                     if (funct7 == 7'b0) begin
-                        o_alu_op = {i_instr[30], funct3};
+                        o_alu_op = lc_alu_op_T'({i_instr[30], funct3});
                         o_wb_sel = WB_ALU;
                         o_op_a_sel = OPA_RS1;
                         o_rd_we = 1'b1;
@@ -160,7 +160,7 @@ always_comb begin
 
                 3'b101: begin     //SRLI, SRAI
                     if (funct7 == 7'b0100000 || funct7 == 7'b0) begin
-                        o_alu_op = {i_instr[30], funct3};
+                        o_alu_op = lc_alu_op_T'({i_instr[30], funct3});
                         o_wb_sel = WB_ALU;
                         o_op_a_sel = OPA_RS1;
                         o_rd_we = 1'b1;  
@@ -176,7 +176,7 @@ always_comb begin
         7'b0110011: begin    // RS1 & RS2
             case (funct7)
                 7'b0: begin 
-                    o_alu_op = {i_instr[30], funct3};
+                    o_alu_op = lc_alu_op_T'({i_instr[30], funct3});
                     o_wb_sel = WB_ALU;
                     o_op_a_sel = OPA_RS1;
                     o_op_b_sel = OPB_RS2;
@@ -184,7 +184,7 @@ always_comb begin
                 end
                 7'b0100000: begin
                     if (funct3 == 3'b000 || funct3 == 3'b101) begin
-                        o_alu_op = {i_instr[30], funct3};
+                        o_alu_op = lc_alu_op_T'({i_instr[30], funct3});
                         o_wb_sel = WB_ALU;
                         o_op_a_sel = OPA_RS1;
                         o_op_b_sel = OPB_RS2;
@@ -199,11 +199,25 @@ always_comb begin
         end
         
         7'b0001111: begin    // FENCE
-            o_fence = 1'b1;
+            if (funct3 == 3'b000) begin
+                if (i_instr == 32'h8330000F)  //FENCE.TSO
+                  o_illegal = 1'b1;
+                else if (i_instr == 32'h0100000F)  //PAUSE
+                  o_illegal = 1'b1;
+                else
+                  o_fence = 1'b1;
+            end
+            else
+                o_illegal =1'b1;
         end
         
         7'b1110011: begin    // EBREAK, ECALL
-            o_ebreak = 1'b1;
+            if (i_instr == 32'h00000073)
+              o_ecall = 1'b1;
+            else if (i_instr == 32'h00100073)
+              o_ebreak = 1'b1;
+            else 
+              o_illegal = 1'b1;
         end
         
         default:
