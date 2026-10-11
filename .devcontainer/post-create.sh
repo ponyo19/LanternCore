@@ -7,10 +7,12 @@ DEBIAN_FRONTEND=noninteractive apt install -y \
     dbus-x11 \
     git \
     ghdl \
+    gcc-riscv64-unknown-elf \
     gtkwave \
     iverilog \
     jq \
     python3-pip \
+    binutils-riscv64-unknown-elf \
     universal-ctags \
     verilator \
     wget
