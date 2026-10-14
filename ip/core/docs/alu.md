@@ -23,8 +23,24 @@ module lc_alu #(
 
 ## Operations
 
-To-do:
-- Define type `alu_op_T` in `lc_pkg.sv` with all ALU operations. Check what can be reused.
+`lc_alu_op_T` in `lc_pkg.sv`. The encoding is `{funct7[5], funct3}`, so R-type instructions map directly.
+
+| `lc_alu_op_T` | Encoding | Result                    | Used by                                         |
+|---------------|----------|---------------------------|-------------------------------------------------|
+| `ALU_ADD`     | `0000`   | `a + b`                   | ADD, ADDI, LUI, AUIPC, JAL, JALR, loads, stores |
+| `ALU_SUB`     | `1000`   | `a - b`                   | SUB                                             |
+| `ALU_SLL`     | `0001`   | `a << b[4:0]`             | SLL, SLLI                                       |
+| `ALU_SLT`     | `0010`   | `a < b` signed, 0 or 1    | SLT, SLTI                                       |
+| `ALU_SLTU`    | `0011`   | `a < b` unsigned, 0 or 1  | SLTU, SLTIU                                     |
+| `ALU_XOR`     | `0100`   | `a ^ b`                   | XOR, XORI                                       |
+| `ALU_SRL`     | `0101`   | `a >> b[4:0]`             | SRL, SRLI                                       |
+| `ALU_SRA`     | `1101`   | `a >>> b[4:0]` signed     | SRA, SRAI                                       |
+| `ALU_OR`      | `0110`   | `a \| b`                  | OR, ORI                                         |
+| `ALU_AND`     | `0111`   | `a & b`                   | AND, ANDI                                       |
+
+- LUI uses `0 + imm` (`OPA_ZERO`), AUIPC and JAL use `pc + imm` (`OPA_PC`), JALR, loads and stores use `rs1 + imm`.
+- Branches (BEQ/BNE/BLT/BGE/BLTU/BGEU) only use the flags `o_eq`, `o_lt`, `o_ltu` with `op_a = rs1`, `op_b = rs2`.
+- FENCE, ECALL and EBREAK do not use the ALU.
 
 ## Requirements
 
