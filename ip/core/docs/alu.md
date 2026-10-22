@@ -10,14 +10,14 @@
 module lc_alu #(
     lc_config_t LC_CONFIG
 ) (
-    input logic [LC_CONFIG.DATA_WIDTH-1:0]      i_op_a,
-    input logic [LC_CONFIG.DATA_WIDTH-1:0]      i_op_b,
-    input alu_top_T                             i_alu_op,
+    input logic [LC_CONFIG.DATA_WIDTH-1:0]      op_a_i,
+    input logic [LC_CONFIG.DATA_WIDTH-1:0]      op_b_i,
+    input alu_top_T                             alu_op_i,
 
-    output logic [LC_CONFIG.DATA_WIDTH-1:0]     o_alu_result,
-    output logic                                o_eq,    // op_a == op_b
-    output logic                                o_lt,    // op_a <  op_b, signed
-    output logic                                o_ltu    // op_a <  op_b, unsigned
+    output logic [LC_CONFIG.DATA_WIDTH-1:0]     alu_result_o,
+    output logic                                eq_o,    // op_a == op_b
+    output logic                                lt_o,    // op_a <  op_b, signed
+    output logic                                ltu_o    // op_a <  op_b, unsigned
 );
 ```
 
@@ -39,7 +39,7 @@ module lc_alu #(
 | `ALU_AND`     | `0111`   | `a & b`                   | AND, ANDI                                       |
 
 - LUI uses `0 + imm` (`OPA_ZERO`), AUIPC and JAL use `pc + imm` (`OPA_PC`), JALR, loads and stores use `rs1 + imm`.
-- Branches (BEQ/BNE/BLT/BGE/BLTU/BGEU) only use the flags `o_eq`, `o_lt`, `o_ltu` with `op_a = rs1`, `op_b = rs2`.
+- Branches (BEQ/BNE/BLT/BGE/BLTU/BGEU) only use the flags `eq_o`, `lt_o`, `ltu_o` with `op_a = rs1`, `op_b = rs2`.
 - FENCE, ECALL and EBREAK do not use the ALU.
 
 ## Requirements

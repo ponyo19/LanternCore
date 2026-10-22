@@ -52,16 +52,16 @@ class lc_wb_sel_T:
     WB_PC4      = 0b10
 
 SIGNALS = [
-    "o_alu_op",
-    "o_op_a_sel",
-    "o_op_b_sel",
-    "o_rd_we",
-    "o_mem_re",
-    "o_mem_we",
-    "o_mem_size",
-    "o_mem_unsigned",
-    "o_branch",
-    "o_wb_sel",
+    "alu_op_o",
+    "op_a_sel_o",
+    "op_b_sel_o",
+    "rd_we_o",
+    "mem_re_o",
+    "mem_we_o",
+    "mem_size_o",
+    "mem_unsigned_o",
+    "branch_o",
+    "wb_sel_o",
 ]
 
 CONSTANTS = {
@@ -401,21 +401,21 @@ def reference_decode(instr):
 
 async def test_decoder(dut, instruction): 
   instr_name = reference_decode(instruction)
-  dut.i_instr.value = instruction
+  dut.instr_i.value = instruction
   await Timer(1, unit="ns")
 
   if instr_name == "ILLEGAL":
-      assert int(dut.o_illegal.value) == 1
-      assert int(dut.o_rd_we.value) == 0
-      assert int(dut.o_mem_re.value) == 0
-      assert int(dut.o_mem_we.value) == 0
-      assert int(dut.o_branch.value) == 0
-      assert int(dut.o_jal.value) == 0
-      assert int(dut.o_jalr.value) == 0
+      assert int(dut.illegal_o.value) == 1
+      assert int(dut.rd_we_o.value) == 0
+      assert int(dut.mem_re_o.value) == 0
+      assert int(dut.mem_we_o.value) == 0
+      assert int(dut.branch_o.value) == 0
+      assert int(dut.jal_o.value) == 0
+      assert int(dut.jalr_o.value) == 0
 
   else:
       expected = EXPECTED[instr_name]
-      assert int(dut.o_illegal.value) == 0
+      assert int(dut.illegal_o.value) == 0
 
       for signal, expected_value in zip(SIGNALS, expected):
 
@@ -435,7 +435,7 @@ async def test_decoder(dut, instruction):
               f"expected {expected_value}, got {actual}"
           )
 
-      assert int(dut.o_imm.value) == imm_gen(instruction)
+      assert int(dut.imm_o.value) == imm_gen(instruction)
 
 @cocotb.test()
 async def random_test(dut):

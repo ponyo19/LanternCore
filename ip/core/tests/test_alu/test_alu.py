@@ -93,26 +93,26 @@ def reference_alu(op, a, b):
 
 def reference_flags(a, b):
     return {
-        "o_eq":  int(a == b),
-        "o_lt":  int(to_signed(a) < to_signed(b)),
-        "o_ltu": int(a < b),
+        "eq_o":  int(a == b),
+        "lt_o":  int(to_signed(a) < to_signed(b)),
+        "ltu_o": int(a < b),
     }
 
 async def check_alu(dut, op, a, b):
     a &= MASK
     b &= MASK
 
-    dut.i_op_a.value = a
-    dut.i_op_b.value = b
-    dut.i_alu_op.value = op
+    dut.op_a_i.value = a
+    dut.op_b_i.value = b
+    dut.alu_op_i.value = op
     await Timer(1, unit="ns")
 
     msg = f"{op_name(op)} a=0x{a:08x} b=0x{b:08x}"
 
     expected = reference_alu(op, a, b)
-    actual = int(dut.o_alu_result.value)
+    actual = int(dut.alu_result_o.value)
     assert actual == expected, (
-        f"{msg}: o_alu_result expected 0x{expected:08x}, got 0x{actual:08x}"
+        f"{msg}: alu_result_o expected 0x{expected:08x}, got 0x{actual:08x}"
     )
 
     for signal, expected_value in reference_flags(a, b).items():
