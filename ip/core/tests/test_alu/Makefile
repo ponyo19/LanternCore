@@ -2,8 +2,8 @@
 SIM = verilator
 TOPLEVEL_LANG = verilog
 
-VERILOG_SOURCES += $(PWD)/../../rtl/lc_pkg.sv
-VERILOG_SOURCES += $(PWD)/../../rtl/lc_alu.sv
+VERILOG_SOURCES += $(CURDIR)/../../rtl/lc_pkg.sv
+VERILOG_SOURCES += $(CURDIR)/../../rtl/lc_alu.sv
 
 
 TOPLEVEL = lc_alu

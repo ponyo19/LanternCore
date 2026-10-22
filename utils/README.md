@@ -15,3 +15,13 @@ make -C utils lint_list             # list registered tops
 
 For `lint`, `FILELIST=path/to/file.f` optionally overrides that top's
 registered file list.
+
+## Tests
+
+Run every test suite Makefile directly under `ip/core/tests`:
+
+```sh
+make -C utils test_all
+```
+
+The `ci` target runs both the registered lint checks and these test suites.

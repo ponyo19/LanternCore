@@ -2,9 +2,9 @@
 SIM = verilator
 TOPLEVEL_LANG = verilog
 
-VERILOG_SOURCES += $(PWD)/../../rtl/lc_pkg.sv
-VERILOG_SOURCES += $(PWD)/../../rtl/lc_imm_gen.sv
-VERILOG_SOURCES += $(PWD)/../../rtl/lc_decoder.sv
+VERILOG_SOURCES += $(CURDIR)/../../rtl/lc_pkg.sv
+VERILOG_SOURCES += $(CURDIR)/../../rtl/lc_imm_gen.sv
+VERILOG_SOURCES += $(CURDIR)/../../rtl/lc_decoder.sv
 
 
 TOPLEVEL = lc_decoder

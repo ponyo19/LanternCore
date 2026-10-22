@@ -3,6 +3,7 @@ LINT_LIST := \
   lc_decoder:../ip/core/lc_hw.f \
 
 include lint.mk
+include autotest.mk
 
-ci: lint_all
+ci: lint_all test_all
 .PHONY: ci
