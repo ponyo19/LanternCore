@@ -1,0 +1,11 @@
+# cocotb / Verilator test outputs
+sim_build/
+obj_dir/
+results.xml
+*.fst
+*.vcd
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
