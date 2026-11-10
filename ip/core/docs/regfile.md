@@ -35,5 +35,5 @@ module lc_regfile #(
 
 - [] `rtl/lc_regfile.sv` is pushed
 - [] Verilator lint passes with `-Wall`
-- [] Self-checking testbench in `tests/test_regfile/` checks important cases: Read and write of `x0`, register file functions as intended,...
+- [] Self-checking testbench in `tests/test_regfile/` checks important cases: Read and write of `x0`, register file functions as requirements,...
 
