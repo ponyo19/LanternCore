@@ -9,31 +9,35 @@
 ## Interface
 
 ```systemverilog
-module lc_decoder
-  import lc_pkg::*;
-(
-  input  logic [31:0]   i_instr,
+module lc_decoder 
+    import lc_pkg::*;
+#(
+    parameter lc_config_T g_LC_CONFIG = '{DATA_WIDTH: 32}
+) (
+    input  logic [31:0]   instr_i,
 
-  output logic [4:0]    o_rs1_addr, o_rs2_addr, o_rd_addr,
-  output logic          o_rd_we,
-  output logic [31:0]   o_imm,          // sign-extended, correct format per instruction
+    output logic [4:0]    rs1_addr_o, rs2_addr_o, rd_addr_o,
+    output logic          re_rs1_o, re_rs2_o,
+    output logic          rd_we_o,
+    
+    output logic [g_LC_CONFIG.DATA_WIDTH-1:0]   imm_o,          // sign-extended, correct format per instruction
 
-  output lc_alu_op_T    o_alu_op,
-  output lc_alu_op_a_sel_T  o_op_a_sel,     // OPA_RS1 | OPA_PC | OPA_ZERO
-  output lc_alu_op_b_sel_T  o_op_b_sel,     // OPB_RS2 | OPB_IMM
+    output lc_alu_op_T    alu_op_o,
+    output lc_alu_op_a_sel_T  op_a_sel_o,     // OPA_RS1 | OPA_PC | OPA_ZERO
+    output lc_alu_op_b_sel_T  op_b_sel_o,     // OPB_RS2 | OPB_IMM
 
-  output logic          o_mem_re, o_mem_we,
-  output lc_mem_size_T  o_mem_size,     // MEM_B | MEM_H | MEM_W
-  output logic          o_mem_unsigned,
+    output logic          mem_re_o, mem_we_o,
+    output lc_mem_size_T  mem_size_o,     // MEM_B | MEM_H | MEM_W
+    output logic          mem_unsigned_o,
 
-  output lc_wb_sel_T    o_wb_sel,       // WB_ALU | WB_MEM | WB_PC4
+    output lc_wb_sel_T    wb_sel_o,       // WB_ALU | WB_MEM | WB_PC4
 
-  output logic          o_branch,
-  output logic [2:0]    o_branch_cond,  // funct3 of the branch
-  output logic          o_jal, o_jalr,
+    output logic          branch_o,
+    output logic [2:0]    branch_cond_o,  // funct3 of the branch
+    output logic          jal_o, jalr_o,
 
-  output logic          o_fence, o_ecall, o_ebreak,
-  output logic          o_illegal
+    output logic          fence_o, ecall_o, ebreak_o,
+    output logic          illegal_o
 );
 ```
 
