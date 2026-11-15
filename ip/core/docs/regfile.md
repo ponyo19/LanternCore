@@ -5,10 +5,12 @@
 ## Interface
 
 ```systemverilog
-module lc_regfile #(
+module lc_regfile
+    import lc_pkg::*;
+#(
     parameter lc_config_T g_LC_CONFIG = '{DATA_WIDTH: 32}
-) (
-    input  logic                              clk_i,
+)(
+    input  logic                                clk_i,
 
     // Read ports
     input  logic                                re_rs1_i,
@@ -36,7 +38,7 @@ module lc_regfile #(
 
 ## Done when
 
-- [ ] `rtl/lc_regfile.sv` is pushed
-- [ ] Verilator lint passes with `-Wall`
-- [ ] Self-checking testbench in `tests/test_regfile/` checks important cases: Read and write of `x0`, register file functions as requirements,...
+- [x] `rtl/lc_regfile.sv` is pushed
+- [x] Verilator lint passes with `-Wall`
+- [x] Self-checking testbench in `tests/test_regfile/` checks important cases: Read and write of `x0`, register file functions as requirements,...
 
