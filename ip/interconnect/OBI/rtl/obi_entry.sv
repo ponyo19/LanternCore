@@ -1,1 +1,0 @@
-// Pack individual signals into a single bus for OBI interface
