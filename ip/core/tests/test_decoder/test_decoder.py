@@ -20,7 +20,7 @@ class instr_opcode:
     FENCE  = 0b0001111
     ECALL_EBREAK = 0b1110011
 
-class lc_alu_op_T:
+class lc_alu_op_t:
     ALU_ADD  = 0b0000
     ALU_SUB  = 0b1000
     ALU_SLL  = 0b0001
@@ -41,12 +41,12 @@ class lc_alu_op_b_sel:
     OPB_RS2     = 0b0
     OPB_IMM     = 0b1
 
-class lc_mem_size_T:
+class lc_mem_size_t:
     MEM_B       = 0b00
     MEM_H       = 0b01
     MEM_W       = 0b10
 
-class lc_wb_sel_T:
+class lc_wb_sel_t:
     WB_ALU      = 0b00
     WB_MEM      = 0b01
     WB_PC4      = 0b10
@@ -66,16 +66,16 @@ SIGNALS = [
 
 CONSTANTS = {
     # ALU
-    "ALU_ADD":  lc_alu_op_T.ALU_ADD,
-    "ALU_SUB":  lc_alu_op_T.ALU_SUB,
-    "ALU_SLL":  lc_alu_op_T.ALU_SLL,
-    "ALU_SLT":  lc_alu_op_T.ALU_SLT,
-    "ALU_SLTU": lc_alu_op_T.ALU_SLTU,
-    "ALU_XOR":  lc_alu_op_T.ALU_XOR,
-    "ALU_SRL":  lc_alu_op_T.ALU_SRL,
-    "ALU_SRA":  lc_alu_op_T.ALU_SRA,
-    "ALU_OR":   lc_alu_op_T.ALU_OR,
-    "ALU_AND":  lc_alu_op_T.ALU_AND,
+    "ALU_ADD":  lc_alu_op_t.ALU_ADD,
+    "ALU_SUB":  lc_alu_op_t.ALU_SUB,
+    "ALU_SLL":  lc_alu_op_t.ALU_SLL,
+    "ALU_SLT":  lc_alu_op_t.ALU_SLT,
+    "ALU_SLTU": lc_alu_op_t.ALU_SLTU,
+    "ALU_XOR":  lc_alu_op_t.ALU_XOR,
+    "ALU_SRL":  lc_alu_op_t.ALU_SRL,
+    "ALU_SRA":  lc_alu_op_t.ALU_SRA,
+    "ALU_OR":   lc_alu_op_t.ALU_OR,
+    "ALU_AND":  lc_alu_op_t.ALU_AND,
 
     # Operand A
     "OPA_RS1":  lc_alu_op_a_sel.OPA_RS1,
@@ -87,14 +87,14 @@ CONSTANTS = {
     "OPB_IMM": lc_alu_op_b_sel.OPB_IMM,
 
     # Memory
-    "MEM_B": lc_mem_size_T.MEM_B,
-    "MEM_H": lc_mem_size_T.MEM_H,
-    "MEM_W": lc_mem_size_T.MEM_W,
+    "MEM_B": lc_mem_size_t.MEM_B,
+    "MEM_H": lc_mem_size_t.MEM_H,
+    "MEM_W": lc_mem_size_t.MEM_W,
 
     # Writeback
-    "WB_ALU": lc_wb_sel_T.WB_ALU,
-    "WB_MEM": lc_wb_sel_T.WB_MEM,
-    "WB_PC4": lc_wb_sel_T.WB_PC4,
+    "WB_ALU": lc_wb_sel_t.WB_ALU,
+    "WB_MEM": lc_wb_sel_t.WB_MEM,
+    "WB_PC4": lc_wb_sel_t.WB_PC4,
 }
 
 "bitstring slice"

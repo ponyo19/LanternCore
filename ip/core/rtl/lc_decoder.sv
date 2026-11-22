@@ -2,7 +2,7 @@
 import lc_pkg::*;
 
 module lc_decoder #(
-    parameter lc_config_T g_LC_CONFIG = '{DATA_WIDTH: 32}
+    parameter lc_config_t g_LC_CONFIG = LC_CONFIG_DEFAULT
 ) (
     input  logic [31:0]   instr_i,
 
@@ -10,15 +10,15 @@ module lc_decoder #(
     output logic          rd_we_o,
     output logic [31:0]   imm_o,          // sign-extended, correct format per instruction
 
-    output lc_alu_op_T    alu_op_o,
-    output lc_alu_op_a_sel_T  op_a_sel_o,     // OPA_RS1 | OPA_PC | OPA_ZERO
-    output lc_alu_op_b_sel_T  op_b_sel_o,     // OPB_RS2 | OPB_IMM
+    output lc_alu_op_t    alu_op_o,
+    output lc_alu_op_a_sel_t  op_a_sel_o,     // OPA_RS1 | OPA_PC | OPA_ZERO
+    output lc_alu_op_b_sel_t  op_b_sel_o,     // OPB_RS2 | OPB_IMM
 
     output logic          mem_re_o, mem_we_o,
-    output lc_mem_size_T  mem_size_o,     // MEM_B | MEM_H | MEM_W
+    output lc_mem_size_t  mem_size_o,     // MEM_B | MEM_H | MEM_W
     output logic          mem_unsigned_o,
 
-    output lc_wb_sel_T    wb_sel_o,       // WB_ALU | WB_MEM | WB_PC4
+    output lc_wb_sel_t    wb_sel_o,       // WB_ALU | WB_MEM | WB_PC4
 
     output logic          branch_o,
     output logic [2:0]    branch_cond_o,  // funct3 of the branch
@@ -52,7 +52,7 @@ always_comb begin
     wb_sel_o = WB_ALU;
     rd_we_o = 1'b0;
 
-    mem_size_o = lc_mem_size_T'(funct3[1:0]);
+    mem_size_o = lc_mem_size_t'(funct3[1:0]);
     mem_unsigned_o = funct3[2];
     mem_re_o = 1'b0;
     mem_we_o = 1'b0;
@@ -139,7 +139,7 @@ always_comb begin
         7'b0010011: begin    //RS1 & IMM
             case (funct3) 
                 3'b000, 3'b010, 3'b011, 3'b100, 3'b110, 3'b111: begin
-                    alu_op_o = lc_alu_op_T'({1'b0, funct3});
+                    alu_op_o = lc_alu_op_t'({1'b0, funct3});
                     wb_sel_o = WB_ALU;
                     op_a_sel_o = OPA_RS1;
                     rd_we_o = 1'b1;
@@ -147,7 +147,7 @@ always_comb begin
                 
                 3'b001: begin     //SLLI
                     if (funct7 == 7'b0) begin
-                        alu_op_o = lc_alu_op_T'({instr_i[30], funct3});
+                        alu_op_o = lc_alu_op_t'({instr_i[30], funct3});
                         wb_sel_o = WB_ALU;
                         op_a_sel_o = OPA_RS1;
                         rd_we_o = 1'b1;
@@ -160,7 +160,7 @@ always_comb begin
 
                 3'b101: begin     //SRLI, SRAI
                     if (funct7 == 7'b0100000 || funct7 == 7'b0) begin
-                        alu_op_o = lc_alu_op_T'({instr_i[30], funct3});
+                        alu_op_o = lc_alu_op_t'({instr_i[30], funct3});
                         wb_sel_o = WB_ALU;
                         op_a_sel_o = OPA_RS1;
                         rd_we_o = 1'b1;
@@ -176,7 +176,7 @@ always_comb begin
         7'b0110011: begin    // RS1 & RS2
             case (funct7)
                 7'b0: begin 
-                    alu_op_o = lc_alu_op_T'({instr_i[30], funct3});
+                    alu_op_o = lc_alu_op_t'({instr_i[30], funct3});
                     wb_sel_o = WB_ALU;
                     op_a_sel_o = OPA_RS1;
                     op_b_sel_o = OPB_RS2;
@@ -184,7 +184,7 @@ always_comb begin
                 end
                 7'b0100000: begin
                     if (funct3 == 3'b000 || funct3 == 3'b101) begin
-                        alu_op_o = lc_alu_op_T'({instr_i[30], funct3});
+                        alu_op_o = lc_alu_op_t'({instr_i[30], funct3});
                         wb_sel_o = WB_ALU;
                         op_a_sel_o = OPA_RS1;
                         op_b_sel_o = OPB_RS2;

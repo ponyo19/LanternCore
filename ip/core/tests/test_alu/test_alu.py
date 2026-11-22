@@ -5,7 +5,7 @@ from cocotb.triggers import Timer
 WIDTH = 32
 MASK = (1 << WIDTH) - 1
 
-class lc_alu_op_T:
+class lc_alu_op_t:
     ALU_ADD  = 0b0000
     ALU_SUB  = 0b1000
     ALU_SLL  = 0b0001
@@ -18,22 +18,22 @@ class lc_alu_op_T:
     ALU_AND  = 0b0111
 
 VALID_OPS = [
-    lc_alu_op_T.ALU_ADD,
-    lc_alu_op_T.ALU_SUB,
-    lc_alu_op_T.ALU_SLL,
-    lc_alu_op_T.ALU_SLT,
-    lc_alu_op_T.ALU_SLTU,
-    lc_alu_op_T.ALU_XOR,
-    lc_alu_op_T.ALU_SRL,
-    lc_alu_op_T.ALU_SRA,
-    lc_alu_op_T.ALU_OR,
-    lc_alu_op_T.ALU_AND,
+    lc_alu_op_t.ALU_ADD,
+    lc_alu_op_t.ALU_SUB,
+    lc_alu_op_t.ALU_SLL,
+    lc_alu_op_t.ALU_SLT,
+    lc_alu_op_t.ALU_SLTU,
+    lc_alu_op_t.ALU_XOR,
+    lc_alu_op_t.ALU_SRL,
+    lc_alu_op_t.ALU_SRA,
+    lc_alu_op_t.ALU_OR,
+    lc_alu_op_t.ALU_AND,
 ]
 
 "encodings of the 4-bit alu_op that are not used, must return 0"
 UNUSED_OPS = [op for op in range(16) if op not in VALID_OPS]
 
-SHIFT_OPS = [lc_alu_op_T.ALU_SLL, lc_alu_op_T.ALU_SRL, lc_alu_op_T.ALU_SRA]
+SHIFT_OPS = [lc_alu_op_t.ALU_SLL, lc_alu_op_t.ALU_SRL, lc_alu_op_t.ALU_SRA]
 
 CORNERS = [
     0x00000000,  # 0
@@ -52,7 +52,7 @@ CORNERS = [
 ]
 
 def op_name(op):
-    for name, value in vars(lc_alu_op_T).items():
+    for name, value in vars(lc_alu_op_t).items():
         if name.startswith("ALU_") and value == op:
             return name
     return f"UNUSED_{op:04b}"
@@ -66,25 +66,25 @@ def to_signed(value):
 "reference model"
 def reference_alu(op, a, b):
     match op:
-        case lc_alu_op_T.ALU_ADD:
+        case lc_alu_op_t.ALU_ADD:
             result = a + b
-        case lc_alu_op_T.ALU_SUB:
+        case lc_alu_op_t.ALU_SUB:
             result = a - b
-        case lc_alu_op_T.ALU_SLL:
+        case lc_alu_op_t.ALU_SLL:
             result = a << (b & 0x1F)
-        case lc_alu_op_T.ALU_SLT:
+        case lc_alu_op_t.ALU_SLT:
             result = int(to_signed(a) < to_signed(b))
-        case lc_alu_op_T.ALU_SLTU:
+        case lc_alu_op_t.ALU_SLTU:
             result = int(a < b)
-        case lc_alu_op_T.ALU_XOR:
+        case lc_alu_op_t.ALU_XOR:
             result = a ^ b
-        case lc_alu_op_T.ALU_SRL:
+        case lc_alu_op_t.ALU_SRL:
             result = a >> (b & 0x1F)
-        case lc_alu_op_T.ALU_SRA:
+        case lc_alu_op_t.ALU_SRA:
             result = to_signed(a) >> (b & 0x1F)   # python >> on negative ints is arithmetic
-        case lc_alu_op_T.ALU_OR:
+        case lc_alu_op_t.ALU_OR:
             result = a | b
-        case lc_alu_op_T.ALU_AND:
+        case lc_alu_op_t.ALU_AND:
             result = a & b
         case _:
             result = 0

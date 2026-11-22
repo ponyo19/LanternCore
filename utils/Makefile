@@ -1,6 +1,4 @@
-LINT_LIST := \
-  lc_alu:../ip/core/lc_hw.f \
-  lc_decoder:../ip/core/lc_hw.f \
+LINT_FILELIST := ../ip/core/lc_hw.f
 
 include lint.mk
 include autotest.mk
