@@ -1,32 +1,9 @@
 package obi_pkg;
 
-
     parameter INSTR_ADDR_WIDTH = 32;
     parameter INSTR_DATA_WIDTH = 32;
     parameter DATA_ADDR_WIDTH  = 32;
     parameter DATA_DATA_WIDTH  = 32;
-
-    typedef struct packed {
-        int INSTR_ADDR_WIDTH;
-        int INSTR_DATA_WIDTH;
-        int DATA_ADDR_WIDTH;
-        int DATA_DATA_WIDTH;
-    } obi_cfg_t;
-
-    
-
-    // Handshake signals
-    typedef struct packed {
-        logic        req;
-    } obi_req_t;
-
-    typedef struct packed {
-        logic        gnt;
-    } obi_gnt_t;
-
-    typedef struct packed {
-        logic        rvalid;
-    } obi_rvalid_t;
 
     // Instruction bus payloads (read-only)
     typedef struct packed {
