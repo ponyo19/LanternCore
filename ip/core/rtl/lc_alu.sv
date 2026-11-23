@@ -2,11 +2,11 @@
 import lc_pkg::*;
 
 module lc_alu #(
-    parameter lc_config_T g_LC_CONFIG = '{DATA_WIDTH: 32}
+    parameter lc_config_t g_LC_CONFIG = LC_CONFIG_DEFAULT
 ) (
     input logic [g_LC_CONFIG.DATA_WIDTH-1:0]    op_a_i,
     input logic [g_LC_CONFIG.DATA_WIDTH-1:0]    op_b_i,
-    input lc_pkg::lc_alu_op_T                   alu_op_i,
+    input lc_pkg::lc_alu_op_t                   alu_op_i,
 
     output logic [g_LC_CONFIG.DATA_WIDTH-1:0]   alu_result_o,
     output logic                                eq_o,    // op_a == op_b

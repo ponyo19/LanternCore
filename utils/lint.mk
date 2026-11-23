@@ -1,30 +1,22 @@
-VERILATOR    ?= verilator
-LINT_WAIVERS ?= lint_waivers.vlt
-LINT_LIST    ?=            # top:filelist pairs
-TOP          ?=
-FILELIST     ?=            # optional override
+VERILATOR     ?= verilator
+LINT_WAIVERS  ?= lint_waivers.vlt
+LINT_FILELIST ?=            # filelist to lint all modules from
+TOP           ?=
 
-# All registered tops
-LINT_TOPS = $(foreach u,$(LINT_LIST),$(firstword $(subst :, ,$(u))))
+# All modules declared in the .v/.sv files of the filelist
+_srcs     = $(addprefix $(dir $(LINT_FILELIST)),$(filter %.v %.sv,$(shell sed 's://.*::' $(LINT_FILELIST))))
+LINT_TOPS = $(shell sed -nE 's/^\s*module\s+(\w+).*/\1/p' $(_srcs))
 
-# Filelist for a top: $(call lint_fl,lc_core) -> ip/core/lc_hw.f
-lint_fl = $(patsubst $1:%,%,$(filter $1:%,$(LINT_LIST)))
-
-# Shared command
-lint_cmd = $(VERILATOR) --lint-only -Wall --top-module $1 $(LINT_WAIVERS) -F $2
+lint_cmd = $(VERILATOR) --lint-only -Wall --top-module $1 $(LINT_WAIVERS) -F $(LINT_FILELIST)
 
 lint:
 	$(if $(TOP),,$(error Set TOP=<module>. Available: $(LINT_TOPS)))
-	$(eval _FL := $(or $(FILELIST),$(call lint_fl,$(TOP))))
-	$(if $(_FL),,$(error Unknown TOP '$(TOP)'. Available: $(LINT_TOPS)))
-	@echo "=== $(TOP) ==="
-	$(call lint_cmd,$(TOP),$(_FL))
+	$(call lint_cmd,$(TOP))
 
 lint_all:
-	@for u in $(LINT_LIST); do \
-	  top=$${u%%:*}; f=$${u#*:}; \
+	@for top in $(LINT_TOPS); do \
 	  echo "=== $$top ==="; \
-	  $(call lint_cmd,$$top,$$f) || exit 1; \
+	  $(call lint_cmd,$$top) || exit 1; \
 	done
 
 lint_list:

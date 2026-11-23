@@ -1,6 +1,6 @@
 {
     "name": "LanternCore Dev",
-    "image": "ubuntu:jammy",
+    "build": { "dockerfile": "Dockerfile" },
     "runArgs": [
       "--name",
       "lanterncore-dev"
@@ -8,7 +8,6 @@
     "remoteEnv": {
       "LANG": "C.UTF-8"
     },
-    "postCreateCommand": "bash ./.devcontainer/post-create.sh",
     "customizations": {
       "vscode": {
         "extensions": [

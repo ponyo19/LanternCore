@@ -1,7 +1,7 @@
 module lc_regfile
     import lc_pkg::*;
 #(
-    parameter lc_config_T g_LC_CONFIG = '{DATA_WIDTH: 32}
+    parameter lc_config_t g_LC_CONFIG = LC_CONFIG_DEFAULT
 )(
     input  logic                                clk_i,
 
