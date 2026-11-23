@@ -9,31 +9,44 @@
 ## Interface
 
 ```systemverilog
-module lc_if #(
-    parameter lc_config_T g_LC_CONFIG = '{DATA_WIDTH: 32}
+module lc_if
+    import lc_pkg::*;
+    import obi_pkg::*;
+#(
+    parameter lc_config_t LC_CONFIG_DEFAULT
 ) (
     input logic clk_i,
-    input logic re_en_i,
+    input logic rst_ni,
+    input logic re_i,
 
-    input  logic [g_LC_CONFIG.DATA_WIDTH-1:0 ] pc_i,
-    output logic [g_LC_CONFIG.DATA_WIDTH-1:0 ] instr_o,
+    input  logic [LC_CONFIG_DEFAULT.DATA_WIDTH-1:0 ] pc_i,
+    output logic [LC_CONFIG_DEFAULT.DATA_WIDTH-1:0 ] instr_o,
+    output logic done_o, err_o,
 
-    obi_if.manager_if #(
-        .REQ_TYPE(obi_inst_req_T),
-        .RESP_TYPE(obi_inst_resp_T)
-    ) m2s_obi
+    // OBI's interface
+    input  logic gnt, rvalid,
+    output logic req,
+
+    input  obi_inst_resp_t resp_payload,
+    output obi_inst_req_t  req_payload
 );
 ```
 
 # Operations
-- When `re_en_i` is HIGH, assert `req` and send `pc_i` as `addr`. 
+## IF
+- `instr_o` is received combinationally from `rdata` and only active for one cycle. 
+- When `instr_o` contains the needed data, pulse `done_o` HIGH for one cycle.
+- `err_o` is received combinationally from err resp payload and only active for one cycle.
+- `err` happens when instruction rom received pc outside of its range, and is handled by the rom. 
+## OBI
+- when synchronous `rst_ni` is LOW, reset the FSM to IDLE and deassert req.
+- When `re_i` is HIGH, assert `req` and send `pc_i` as `addr`. 
 - Keep `req` asserted and `addr` stable until `req && gnt`(request accepted) is sampled at a rising clock edge.
 - When the request is accepted, deassert `req` and wait for response.
 - When `rvalid` is HIGH, the instruction can be received from `rdata`.
 
 # Assumption for current implementation
-- assume `err` = 0.
-- Assume `re_en_i` is a one-clock-cycle pulse.
+- Assume `re_i` is a one-clock-cycle pulse.
 
 # Done when
 

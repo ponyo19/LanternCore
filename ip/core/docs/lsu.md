@@ -11,50 +11,59 @@
 ```systemverilog
 module lc_lsu 
     import lc_pkg::*;
+    import obi_pkg::*;
 #(
     parameter lc_config_T g_LC_CONFIG = '{DATA_WIDTH: 32}
 )(
     input logic clk_i,
+    input logic rst_ni,
 
     input logic [g_LC_CONFIG.DATA_WIDTH-1:0] addr_i,
     input logic [g_LC_CONFIG.DATA_WIDTH-1:0] rs2_i,
 
     // Memory read signal
-    input  logic                        mem_re_i, 
-    output [g_LC_CONFIG.DATA_WIDTH-1:0] data_o,
+    input  logic                              re_i, 
+    output logic [g_LC_CONFIG.DATA_WIDTH-1:0] data_o,
 
     // Memory write signals
-    input logic         mem_we_i,
+    input logic         we_i,
     input logic         mem_unsigned_i,
     input lc_mem_size_T mem_size_i,
 
-    obi_if.manager_if #(
-        .REQ_TYPE(obi_data_req_T),
-        .RESP_TYPE(obi_data_resp_T)
-    ) m2s_obi
+    output logic done_o,
+    output logic err_o,
+
+    // OBI's interface
+    input  logic gnt, rvalid,
+    output logic req,
+
+    input  obi_data_resp_t resp_payload,
+    output obi_data_req_t  req_payload
 );
 ```
 # Operations
 ## LSU
-LOAD operation(`mem_re_i=1`)
+- `done_o` is asserted when lsu operation finnish, including error response.
+- `err_o` is received from resp payload and active for one cycle. `err` is handled by the RAM.
+  
+LOAD operation(`re_i=1`)
 - Wait and take the according memory value, perform sign/zero extension depending on the `mem_unsigned_i` and `mem_size_i`.
-- Send the result sequentially to `data_o`. 
+- `data_o` receives the result combinationally, and is active for one cycle.
 
-STORE operation (`mem_we_i=1`)
+STORE operation (`we_i=1`)
 - Use `rs2_i` with the according `mem_size_i` to get the correct aligned `wdata`. 
 - No sign extension.
 
 ## OBI
 - For STORE operation, assert `we`, send the `addr`, the according `wdata` based on `mem_size_i`, and `be` through OBI. 
 - For LOAD operation, deassert `we`, send the `addr` and the according `be` based on `mem_size_i`. `wdata` is ignored by memory.
-- When `mem_re_i || mem_we_i` in IDLE state, assert `req` and send the data request payload accordingly to the input.
+- In IDLE state, when `re_i || we_i`, assert `req` and send the data request payload accordingly to the input.
 - Keep `req` asserted and data request payload stable until `req && gnt`(request accepted) is sampled at a rising clock edge.
 - When the request is accepted, deassert `req` and wait for response.
 - When `rvalid` is HIGH, `rdata` can be received in LOAD, while this mean STORE response is available.
 
 # Assumption for current implementation
-- Assume `err` = 0.
-- Assume the core blocks the combinational signals `mem_rd_i` and `mem_we_i` from constantly activating lsu when not needed.
+- `re_i` and `we_i` remain asserted throughout the lsu operation and are deasserted when the core advances out of MEM stage upon `done_o`.
   
 # Done when
 - [ ] Verilator lint passes with `-Wall`
