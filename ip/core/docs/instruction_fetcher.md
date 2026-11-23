@@ -12,9 +12,7 @@
 module lc_if
     import lc_pkg::*;
     import obi_pkg::*;
-#(
-    parameter lc_config_t LC_CONFIG_DEFAULT
-) (
+(
     input logic clk_i,
     input logic rst_ni,
     input logic re_i,

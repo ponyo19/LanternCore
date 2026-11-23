@@ -12,18 +12,16 @@
 module lc_lsu 
     import lc_pkg::*;
     import obi_pkg::*;
-#(
-    parameter lc_config_T g_LC_CONFIG = '{DATA_WIDTH: 32}
-)(
+(
     input logic clk_i,
     input logic rst_ni,
 
-    input logic [g_LC_CONFIG.DATA_WIDTH-1:0] addr_i,
-    input logic [g_LC_CONFIG.DATA_WIDTH-1:0] rs2_i,
+    input logic [LC_CONFIG_DEFAULT.DATA_WIDTH-1:0] addr_i,
+    input logic [LC_CONFIG_DEFAULT.DATA_WIDTH-1:0] rs2_i,
 
     // Memory read signal
-    input  logic                              re_i, 
-    output logic [g_LC_CONFIG.DATA_WIDTH-1:0] data_o,
+    input  logic                                    re_i, 
+    output logic [LC_CONFIG_DEFAULT.DATA_WIDTH-1:0] data_o,
 
     // Memory write signals
     input logic         we_i,
