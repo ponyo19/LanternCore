@@ -23,6 +23,8 @@ module obi_example_s (
 
     state_t state, state_next;
 
+    logic [INSTR_DATA_WIDTH-1:0] addr_reg;
+
     always_ff @(posedge clk) begin
         if (!rst_n) state <= IDLE;
         else        state <= state_next;
@@ -43,11 +45,21 @@ module obi_example_s (
         end
         PROCESS: begin
             rvalid             = 1'b1;   // 1-cycle pulse
-            resp_payload.rdata = 'd16;
+            resp_payload.rdata = addr_reg;
             state_next                = IDLE;
         end
         default: state_next = IDLE;
         endcase
+    end
+
+    always_ff @( posedge clk ) begin
+        if (!rst_n) begin
+            addr_reg <= '0;
+        end else if (state == IDLE) begin
+            addr_reg <= '0;
+        end else if (state == GNT) begin
+            addr_reg <= req_payload.addr;
+        end 
     end
 
 endmodule

@@ -2,3 +2,4 @@
 lint_off -rule IMPORTSTAR 
 lint_off -rule UNUSEDPARAM -file "*" -match "*g_LC_CONFIG*"
 lint_off -rule UNUSEDPARAM -file "*/lc_pkg.sv"
+lint_off -rule UNUSEDPARAM -file "*/obi_pkg.sv"
