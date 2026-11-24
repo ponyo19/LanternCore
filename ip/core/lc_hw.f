@@ -6,4 +6,6 @@ rtl/lc_branch_unit.sv
 rtl/lc_decoder.sv
 rtl/lc_imm_gen.sv
 rtl/lc_regfile.sv
+rtl/lc_if.sv
+rtl/lc_pc_rom.sv
 rtl/lc_core.sv
