@@ -8,6 +8,7 @@ module if_tb
     input logic clk_i,
     input logic rst_ni,
     input logic re_i,
+    input logic rom_en,
 
     input  logic [LC_CONFIG_DEFAULT.DATA_WIDTH-1:0 ] pc_i,
     output logic [LC_CONFIG_DEFAULT.DATA_WIDTH-1:0 ] instr_o,
@@ -18,6 +19,9 @@ module if_tb
 logic req, gnt, rvalid;
 obi_inst_req_t req_payload;
 obi_inst_resp_t resp_payload;
+
+logic rom_req;
+assign rom_req = rom_en && req;
 
 lc_if if_u (
     .clk_i(clk_i),
@@ -40,7 +44,7 @@ lc_pc_rom #(
 ) rom_u (
     .clk_i(clk_i),
     .rst_ni(rst_ni),
-    .req(req),
+    .req(rom_req),
     .gnt(gnt),
     .rvalid(rvalid),
     .req_payload(req_payload),

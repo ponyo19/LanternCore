@@ -31,6 +31,8 @@ async def reset(dut):
 
 async def re_en_pulse(dut):
     dut.re_i.value = 1
+    await ReadOnly()
+    assert dut.req.value == 1, "req signal should remain HIGH when re_i is HIGH"
     await RisingEdge(dut.clk_i)
     await FallingEdge(dut.clk_i)
     dut.re_i.value = 0
@@ -42,15 +44,7 @@ async def control_monitor(dut):
     await ReadOnly()
 
     assert dut.req.value == 1, "The req signal should go HIGH"
-    assert dut.gnt.value == 0, "gnt should still be LOW"
-
-    await RisingEdge(dut.clk_i)
-    await ReadOnly()
-
-    # GNT
-
-    assert dut.req.value == 1, "The req should be HIGH until transaction phase"
-    assert dut.gnt.value == 1, "The gnt in ROM should go HIGH"
+    assert dut.gnt.value == 1, "gnt should still be HIGH"
 
     await RisingEdge(dut.clk_i)
     await ReadOnly()
@@ -88,7 +82,7 @@ async def if_model(dut, rom, pc):
         assert dut.err_o.value == 0, "err should be LOW when address valid"
 
     assert actual == expect, (
-        f"Instruction mismatch:"
+        f"Instruction mismatch:\n"
         f"Expect: {expect:08X}. Receive: {actual:08X}"
     )
 
@@ -97,6 +91,8 @@ async def if_model(dut, rom, pc):
 async def random_test(dut):
     cocotb.start_soon(Clock(dut.clk_i, 10, unit="ns").start())
     await reset(dut)
+
+    dut.rom_en.value = 1
     
     for _ in range (300):
         await FallingEdge(dut.clk_i)
@@ -104,8 +100,10 @@ async def random_test(dut):
         dut.pc_i.value = pc 
 
         monitor = cocotb.start_soon(control_monitor(dut))
+        if_monitor = cocotb.start_soon(if_model(dut, rom ,pc))
+
         await re_en_pulse(dut)
-        await if_model(dut, rom, pc)
+        await if_monitor
         await monitor
 
 
@@ -113,19 +111,45 @@ async def random_test(dut):
 async def reset_mid_stream(dut):
 
     cocotb.start_soon(Clock(dut.clk_i, 10, unit="ns").start())
+    dut.rom_en.value = 1
 
     # IDLE reset
     await reset(dut)
 
-    # GNT reset
-    await re_en_pulse(dut)
-    await reset(dut)
-
     # PROCESS reset
     await re_en_pulse(dut)
-    await RisingEdge(dut.clk_i)
     await reset(dut)
 
+
+@cocotb.test()
+async def req_back_pressure(dut):
+    pc = 10*4
+
+    cocotb.start_soon(Clock(dut.clk_i, 10, unit="ns").start())
+
+    await reset(dut)
+
+    dut.rom_en.value = 0
+    dut.pc_i.value = pc
+
+    await re_en_pulse(dut)
+
+    for _ in range (30):
+        await RisingEdge(dut.clk_i)
+        assert dut.gnt.value == 0, "The gnt should not be allowed to go HIGH here"
+        assert dut.req.value == 1, "req signal should remain HIGH until gnt is asserted"
+        assert dut.req_payload.value == pc, "The address should remains stable until gnt is asserted"
+
+    dut.rom_en.value = 1
+    await ReadOnly()
+    assert dut.gnt.value == 1, "gnt signal should go HIGH now"
+
+    await RisingEdge(dut.clk_i)
+    await ReadOnly()
+    assert int(dut.instr_o.value) == int(rom[pc // 4]), (
+        f"Instruction mismatch:\n"
+        f"Expect: {rom[pc // 4]:08X}. Receive: {int(dut.instr_o.value):08X}"
+    )
 
 if __name__ == "__main__":
     generate_rom()

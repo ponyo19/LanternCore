@@ -26,7 +26,7 @@ initial begin
 end
 
 typedef enum logic[1:0] {
-    IDLE, GNT, PROCESS
+    IDLE, PROCESS
 } state_t;
 
 state_t state, state_next;
@@ -41,7 +41,6 @@ always_ff @(posedge clk_i) begin
         state <= state_next;
         if (req && gnt) begin
             addr_r <= req_payload.addr;
-        
         end
     end
 end
@@ -56,13 +55,9 @@ always_comb begin
     case (state) 
         IDLE: begin
             if (req) begin
-                state_next = GNT;
+                gnt = 1;
+                state_next = PROCESS;
             end
-        end
-
-        GNT: begin
-            gnt = 1'b1;
-            state_next = PROCESS;
         end
 
         PROCESS: begin
