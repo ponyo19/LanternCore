@@ -42,6 +42,8 @@ module lc_if
 - Keep `req` asserted and `addr` stable until `req && gnt`(request accepted) is sampled at a rising clock edge.
 - When the request is accepted, deassert `req` and wait for response.
 - When `rvalid` is HIGH, the instruction can be received from `rdata`.
+- Takes a minimum one clock cycle counted from `req` HIGH to get the required data.
+
 
 # Assumption for current implementation
 - Assume `re_i` is a one-clock-cycle pulse.
