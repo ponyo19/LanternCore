@@ -9,3 +9,6 @@ results.xml
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Mac
+*.DS_Store
