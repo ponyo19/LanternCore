@@ -59,6 +59,7 @@ STORE operation (`we_i=1`)
 - Keep `req` asserted and data request payload stable until `req && gnt`(request accepted) is sampled at a rising clock edge.
 - When the request is accepted, deassert `req` and wait for response.
 - When `rvalid` is HIGH, `rdata` can be received in LOAD, while this mean STORE response is available.
+- Takes a minimum one clock cycle counted from `req` HIGH to get the required data.
 
 # Assumption for current implementation
 - `re_i` and `we_i` remain asserted throughout the lsu operation and are deasserted when the core advances out of MEM stage upon `done_o`.
